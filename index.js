@@ -11,13 +11,13 @@ var counter = function (content) {
 hexo.extend.helper.register('min2read', function (content, { cn = 300, en = 160 } = {}) {
   var len = counter(content);
   var readingTime = len[0] / cn + len[1] / en;
-  return readingTime < 1 ? '1' : parseInt(readingTime, 10);
+  return readingTime < 1 ? '1' : (readingTime | 0);
 });
 
 hexo.extend.helper.register('wordcount', function (content) {
   var len = counter(content);
   var count = len[0] + len[1];
-  if (count < 1000) {
+  if (count < 10000) {
     return count;
   }
   return Math.round(count / 100) / 10 + 'k';
@@ -25,11 +25,13 @@ hexo.extend.helper.register('wordcount', function (content) {
 
 hexo.extend.helper.register('totalcount', function (site) {
   var count = 0;
-  site.posts.forEach(function (post) {
+  var len = site.posts.length;
+  for (var i = 0; i < len; i++) {
+    var post = site.posts[i];
     var len = counter(post.content);
     count += len[0] + len[1];
-  });
-  if (count < 1000) {
+  }
+  if (count < 10000) {
     return count;
   }
   return Math.round(count / 100) / 10 + 'k';
